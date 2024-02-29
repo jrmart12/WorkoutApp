@@ -26,7 +26,6 @@ export default function ExercisesScreen() {
     queryKey: ["exercises"],
     queryFn: () => client.request(exercisesQuery),
   });
-  console.log(data?.exercises);
   if (isLoading) return <ActivityIndicator />;
   if (error) return <Text>Failed to fetch exercises</Text>;
   return (

@@ -13,6 +13,7 @@ import { Stack } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { gql } from "graphql-request";
 import client from "../../constants/graphqlClient";
+import NewSetInput from "../../components/NewSetInput";
 
 const exerciseQuery = gql`
   query exercises($name: String) {
@@ -66,6 +67,7 @@ const exercise = () => {
             </Text>
           </Pressable>
         </View>
+        <NewSetInput />
       </ScrollView>
     );
   }
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
   panel: {
     backgroundColor: "white",
     padding: 10,
-    marginTop: 10,
+    marginVertical: 10,
     borderRadius: 10,
   },
   seeMore: {
