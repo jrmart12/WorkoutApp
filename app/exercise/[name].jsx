@@ -1,9 +1,10 @@
-import React from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { React, useState } from "react";
+import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import exercises from "../../assets/data/exercises.json";
 import { Stack } from "expo-router";
 const exercise = () => {
+  const [seeMore, setSeeMore] = useState(false);
   const params = useLocalSearchParams();
   const exercise = exercises.find((item) => item.name === params.name);
   if (!exercise) {
@@ -13,7 +14,9 @@ const exercise = () => {
       </View>
     );
   }
-
+  function seeMoreHandler() {
+    setSeeMore(!seeMore);
+  }
   return (
     <ScrollView style={styles.container}>
       <Stack.Screen
@@ -28,7 +31,17 @@ const exercise = () => {
         </Text>
       </View>
       <View style={styles.panel}>
-        <Text style={styles.exerciseInstructions}>{exercise.instructions}</Text>
+        <Text
+          style={styles.exerciseInstructions}
+          numberOfLines={seeMore ? 0 : 3}
+        >
+          {exercise.instructions}
+        </Text>
+        <Pressable onPress={seeMoreHandler}>
+          <Text style={styles.seeMore}>
+            {seeMore ? "See less" : "See more"}
+          </Text>
+        </Pressable>
       </View>
     </ScrollView>
   );
@@ -54,6 +67,12 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 10,
     borderRadius: 10,
+  },
+  seeMore: {
+    padding: 5,
+    alignSelf: "center",
+    fontWeight: "bold",
+    color: "grey",
   },
 });
 
