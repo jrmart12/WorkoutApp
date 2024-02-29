@@ -1,0 +1,32 @@
+type DocumentsEntry {
+  _id: String
+  exercise: String
+  reps: Int
+  weight: Int
+}
+
+type Root {
+  documents: [DocumentsEntry]
+}
+
+type Query {
+  sets: Root
+    @rest(
+      method: POST
+      endpoint: "https://us-east-2.aws.data.mongodb-api.com/app/data-ugmxp/endpoint/data/v1/action/find"
+      headers: [
+        { name: "access-control-request-headers", value: "*" }
+        {
+          name: "api-key"
+          value: "UL4HP26Ofo9voRzvihzeqbkjCvVYYlB7sLZEMlO2a8g017IPfkmAPDpAlj9T3rsl"
+        }
+      ]
+      postbody: """
+      {
+        "collection": "sets",
+        "dataSource": "AtlasCluster",
+        "database": "workouts"
+      }
+      """
+    )
+}

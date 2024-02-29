@@ -2,7 +2,6 @@ import React from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
 const ExerciseItem = ({ item }) => {
-  console.log(item);
   return (
     <Link href={`/exercise/${item.name}`} asChild>
       <Pressable style={styles.exerciseContainer}>

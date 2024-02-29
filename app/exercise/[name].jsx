@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { gql } from "graphql-request";
 import client from "../../constants/graphqlClient";
 import NewSetInput from "../../components/NewSetInput";
+import SetList from "../../components/SetList";
 
 const exerciseQuery = gql`
   query exercises($name: String) {
@@ -41,34 +42,42 @@ const exercise = () => {
   }
   if (exercise) {
     return (
-      <ScrollView style={styles.container}>
-        <Stack.Screen
-          options={{
-            title: exercise.name,
-          }}
-        />
-        <View style={styles.panel}>
-          <Text style={styles.exerciseName}>{exercise.name}</Text>
-          <Text style={styles.exerciseSubtitle}>
-            {exercise?.muscle?.toUpperCase()} |{" "}
-            {exercise?.equipment?.toUpperCase()}
-          </Text>
+      <>
+        <View>
+          <ScrollView style={styles.container}>
+            <Stack.Screen
+              options={{
+                title: exercise.name,
+              }}
+            />
+            <View style={styles.panel}>
+              <Text style={styles.exerciseName}>{exercise.name}</Text>
+              <Text style={styles.exerciseSubtitle}>
+                {exercise?.muscle?.toUpperCase()} |{" "}
+                {exercise?.equipment?.toUpperCase()}
+              </Text>
+            </View>
+            <View style={styles.panel}>
+              <Text
+                style={styles.exerciseInstructions}
+                numberOfLines={seeMore ? 0 : 3}
+              >
+                {exercise.instructions}
+              </Text>
+              <Pressable onPress={seeMoreHandler}>
+                <Text style={styles.seeMore}>
+                  {seeMore ? "See less" : "See more"}
+                </Text>
+              </Pressable>
+            </View>
+            <NewSetInput exerciseName={exercise.name} />
+          </ScrollView>
         </View>
-        <View style={styles.panel}>
-          <Text
-            style={styles.exerciseInstructions}
-            numberOfLines={seeMore ? 0 : 3}
-          >
-            {exercise.instructions}
-          </Text>
-          <Pressable onPress={seeMoreHandler}>
-            <Text style={styles.seeMore}>
-              {seeMore ? "See less" : "See more"}
-            </Text>
-          </Pressable>
+
+        <View>
+          <SetList />
         </View>
-        <NewSetInput />
-      </ScrollView>
+      </>
     );
   }
 };
