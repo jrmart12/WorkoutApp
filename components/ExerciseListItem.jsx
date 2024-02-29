@@ -2,12 +2,13 @@ import React from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { Link } from "expo-router";
 const ExerciseItem = ({ item }) => {
+  console.log(item);
   return (
     <Link href={`/exercise/${item.name}`} asChild>
       <Pressable style={styles.exerciseContainer}>
         <Text style={styles.exerciseName}>{item.name}</Text>
         <Text style={styles.exerciseSubtitle}>
-          {item.muscle.toUpperCase()} | {item.equipment.toUpperCase()}
+          {item?.muscle?.toUpperCase()} | {item?.equipment?.toUpperCase()}
         </Text>
       </Pressable>
     </Link>

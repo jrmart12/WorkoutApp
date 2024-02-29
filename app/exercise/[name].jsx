@@ -1,50 +1,74 @@
 import { React, useState } from "react";
-import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import exercises from "../../assets/data/exercises.json";
 import { Stack } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
+import { gql } from "graphql-request";
+import client from "../../constants/graphqlClient";
+
+const exerciseQuery = gql`
+  query exercises($name: String) {
+    exercises(name: $name) {
+      name
+      equipment
+      instructions
+      muscle
+    }
+  }
+`;
+
 const exercise = () => {
   const [seeMore, setSeeMore] = useState(false);
-  const params = useLocalSearchParams();
-  const exercise = exercises.find((item) => item.name === params.name);
-  if (!exercise) {
-    return (
-      <View>
-        <Text>Exercise not found!</Text>
-      </View>
-    );
-  }
+  const { name } = useLocalSearchParams();
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["exercises", name],
+    queryFn: () => client.request(exerciseQuery, { name }),
+  });
+  const exercise = data?.exercises[0];
+  if (isLoading) return <ActivityIndicator />;
+  if (error) return <Text>Failed to fetch exercises</Text>;
   function seeMoreHandler() {
     setSeeMore(!seeMore);
   }
-  return (
-    <ScrollView style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: exercise.name,
-        }}
-      />
-      <View style={styles.panel}>
-        <Text style={styles.exerciseName}>{exercise.name}</Text>
-        <Text style={styles.exerciseSubtitle}>
-          {exercise.muscle.toUpperCase()} | {exercise.equipment.toUpperCase()}
-        </Text>
-      </View>
-      <View style={styles.panel}>
-        <Text
-          style={styles.exerciseInstructions}
-          numberOfLines={seeMore ? 0 : 3}
-        >
-          {exercise.instructions}
-        </Text>
-        <Pressable onPress={seeMoreHandler}>
-          <Text style={styles.seeMore}>
-            {seeMore ? "See less" : "See more"}
+  if (exercise) {
+    return (
+      <ScrollView style={styles.container}>
+        <Stack.Screen
+          options={{
+            title: exercise.name,
+          }}
+        />
+        <View style={styles.panel}>
+          <Text style={styles.exerciseName}>{exercise.name}</Text>
+          <Text style={styles.exerciseSubtitle}>
+            {exercise?.muscle?.toUpperCase()} |{" "}
+            {exercise?.equipment?.toUpperCase()}
           </Text>
-        </Pressable>
-      </View>
-    </ScrollView>
-  );
+        </View>
+        <View style={styles.panel}>
+          <Text
+            style={styles.exerciseInstructions}
+            numberOfLines={seeMore ? 0 : 3}
+          >
+            {exercise.instructions}
+          </Text>
+          <Pressable onPress={seeMoreHandler}>
+            <Text style={styles.seeMore}>
+              {seeMore ? "See less" : "See more"}
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
